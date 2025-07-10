@@ -35,11 +35,19 @@ public class CartController {
         List<CartGetRes> result = cartService.findAll(logginedMemberId);
         return ResponseEntity.ok(result);
     }
-    @DeleteMapping
-    public ResponseEntity<?> delete(HttpServletRequest httpReq ,@ModelAttribute CartDeleteReq req){
+    @DeleteMapping("/{cartId}")
+    public ResponseEntity<?> deleteMemberItem(HttpServletRequest httpReq ,@PathVariable int cartId){
         int logginedMemberId = (int) HttpUtils.getSessionValue(httpReq, AccountConstants.MEMBER_ID_NAME);
-        req.setMemberId(logginedMemberId);
+        log.info("req: {},  {}",logginedMemberId,cartId);
+        CartDeleteReq req = new CartDeleteReq(logginedMemberId,cartId);
         int result = cartService.remove(req);
+        return ResponseEntity.ok(result);
+
+    }
+    @DeleteMapping
+    public ResponseEntity<?> deleteMemberCart(HttpServletRequest httpReq){
+        int logginedmemberId = (int) HttpUtils.getSessionValue(httpReq, AccountConstants.MEMBER_ID_NAME);
+        int result = cartService.removeAll(logginedmemberId);
         return ResponseEntity.ok(result);
 
     }
